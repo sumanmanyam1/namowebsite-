@@ -20,6 +20,7 @@
                     <a href="services.html" class="nav-link">Services</a>
                     <a href="doctors.html" class="nav-link">Doctors</a>
                     <a href="contact.html" class="nav-link">Contact</a>
+                    <button type="button" class="nav-login-btn" id="loginBtn">Login</button>
                 </div>
                 <div class="nav-toggle">
                     <span class="bar"></span>
@@ -133,6 +134,158 @@
         </div>
     </footer>
 
+    <!-- Login / Patient Status Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <button type="button" class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+
+            <!-- Step 1: Login -->
+            <div class="modal-step" id="loginStep">
+                <h2>Login</h2>
+                <p class="modal-subtitle">Sign in to book appointments or check patient status.</p>
+
+                <!-- Role tabs -->
+                <div class="login-tabs">
+                    <button type="button" class="login-tab active" id="tabPatient">Patient / Visitor</button>
+                    <button type="button" class="login-tab" id="tabStaff">Staff</button>
+                </div>
+
+                <!-- Patient / Visitor login (no password needed) -->
+                <form id="patientLoginForm">
+                    <div class="form-group">
+                        <label for="visitorName">Your Name</label>
+                        <input type="text" id="visitorName" name="visitorName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="visitorPhone">Phone Number</label>
+                        <input type="tel" id="visitorPhone" name="visitorPhone" required>
+                    </div>
+                    <p class="modal-hint">Patients &amp; visitors can continue without a password.</p>
+                    <button type="submit" class="btn btn-primary modal-btn-full">Continue</button>
+                </form>
+
+                <!-- Staff login (requires credentials) -->
+                <form id="loginForm" style="display:none;">
+                    <div class="form-group">
+                        <label for="loginUser">Username</label>
+                        <input type="text" id="loginUser" name="loginUser">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPass">Password</label>
+                        <input type="password" id="loginPass" name="loginPass">
+                    </div>
+                    <p class="modal-hint">Demo staff login &mdash; username: <strong>admin</strong>, password: <strong>namo123</strong></p>
+                    <button type="submit" class="btn btn-primary modal-btn-full">Login</button>
+                </form>
+            </div>
+
+            <!-- Step 2: Choose an option -->
+            <div class="modal-step" id="choiceStep" style="display:none;">
+                <h2>Welcome</h2>
+                <p class="modal-subtitle">What would you like to do?</p>
+                <div class="choice-grid">
+                    <button type="button" class="choice-card" id="choicePatient">
+                        <span class="choice-icon">🧾</span>
+                        <span class="choice-title">Patient Details</span>
+                        <span class="choice-desc">Look up a patient's status</span>
+                    </button>
+                    <button type="button" class="choice-card" id="choiceAppointment">
+                        <span class="choice-icon">📅</span>
+                        <span class="choice-title">Appointments</span>
+                        <span class="choice-desc">Book a new appointment</span>
+                    </button>
+                </div>
+                <button type="button" class="btn btn-secondary modal-btn-full" id="logoutBtn">Logout</button>
+            </div>
+
+            <!-- Step 3: Patient Search -->
+            <div class="modal-step" id="searchStep" style="display:none;">
+                <h2>Find Patient</h2>
+                <p class="modal-subtitle">Enter the patient details to check their status.</p>
+                <form id="patientForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pName">First Name</label>
+                            <input type="text" id="pName" name="pName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pSurname">Surname</label>
+                            <input type="text" id="pSurname" name="pSurname" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pDate">Appointment Date <span class="optional-tag">(optional)</span></label>
+                        <input type="date" id="pDate" name="pDate">
+                    </div>
+                    <button type="submit" class="btn btn-primary modal-btn-full">Check Status</button>
+                    <button type="button" class="btn btn-secondary modal-btn-full" id="backFromSearch">Back</button>
+                </form>
+
+                <!-- Result -->
+                <div class="patient-result" id="patientResult" style="display:none;"></div>
+            </div>
+
+            <!-- Step 4: Book Appointment -->
+            <div class="modal-step" id="appointmentStep" style="display:none;">
+                <h2>Book Appointment</h2>
+                <p class="modal-subtitle">Fill in the details to schedule an appointment.</p>
+                <form id="appointmentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aName">First Name</label>
+                            <input type="text" id="aName" name="aName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="aSurname">Surname</label>
+                            <input type="text" id="aSurname" name="aSurname" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="aPhone">Phone Number</label>
+                        <input type="tel" id="aPhone" name="aPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="aDoctor">Doctor / Department</label>
+                        <select id="aDoctor" name="aDoctor" required>
+                            <option value="" disabled selected>Select a doctor</option>
+                            <option value="Dr. Rahul Sharma (Cardiologist)">Dr. Rahul Sharma (Cardiologist)</option>
+                            <option value="Dr. Priya Reddy (Pediatrician)">Dr. Priya Reddy (Pediatrician)</option>
+                            <option value="Dr. Vikram Singh (Orthopedic Specialist)">Dr. Vikram Singh (Orthopedic Specialist)</option>
+                            <option value="Dr. Sneha Rao (Gynecologist)">Dr. Sneha Rao (Gynecologist)</option>
+                            <option value="Dr. Arjun Kumar (Neurologist)">Dr. Arjun Kumar (Neurologist)</option>
+                            <option value="Dr. Siva Mohan Yadav Yerasi (Dentist)">Dr. Siva Mohan Yadav Yerasi (Dentist)</option>
+                            <option value="Dr. Niketa Sonavane (Dermatologist)">Dr. Niketa Sonavane (Dermatologist)</option>
+                            <option value="Dr. Monica Chib (Psychiatrist)">Dr. Monica Chib (Psychiatrist)</option>
+                            <option value="Dr. D. Nageshwar Reddy (Gastroenterologist)">Dr. D. Nageshwar Reddy (Gastroenterologist)</option>
+                            <option value="Dr. Suresh H. Advani (Oncologist)">Dr. Suresh H. Advani (Oncologist)</option>
+                            <option value="Dr. Harsh Mahajan (Radiologist)">Dr. Harsh Mahajan (Radiologist)</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="aDate">Preferred Date</label>
+                            <input type="date" id="aDate" name="aDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="aTime">Preferred Time</label>
+                            <input type="time" id="aTime" name="aTime" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary modal-btn-full">Confirm Appointment</button>
+                    <button type="button" class="btn btn-secondary modal-btn-full" id="backFromAppointment">Back</button>
+                </form>
+
+                <!-- Confirmation -->
+                <div class="patient-result" id="appointmentResult" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
+
+
+
+
+    

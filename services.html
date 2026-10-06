@@ -20,6 +20,7 @@
                     <a href="services.html" class="nav-link active">Services</a>
                     <a href="doctors.html" class="nav-link">Doctors</a>
                     <a href="contact.html" class="nav-link">Contact</a>
+                    <button type="button" class="nav-login-btn" id="loginBtn">Login</button>
                 </div>
                 <div class="nav-toggle">
                     <span class="bar"></span>
@@ -141,6 +142,58 @@
             </div>
         </div>
     </footer>
+
+    <!-- Login / Patient Status Modal -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <button type="button" class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+
+            <!-- Step 1: Login -->
+            <div class="modal-step" id="loginStep">
+                <h2>Staff Login</h2>
+                <p class="modal-subtitle">Sign in to look up patient status.</p>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUser">Username</label>
+                        <input type="text" id="loginUser" name="loginUser" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPass">Password</label>
+                        <input type="password" id="loginPass" name="loginPass" required>
+                    </div>
+                    <p class="modal-hint">Demo login &mdash; username: <strong>admin</strong>, password: <strong>namo123</strong></p>
+                    <button type="submit" class="btn btn-primary modal-btn-full">Login</button>
+                </form>
+            </div>
+
+            <!-- Step 2: Patient Search -->
+            <div class="modal-step" id="searchStep" style="display:none;">
+                <h2>Find Patient</h2>
+                <p class="modal-subtitle">Enter the patient details to check their status.</p>
+                <form id="patientForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pName">First Name</label>
+                            <input type="text" id="pName" name="pName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pSurname">Surname</label>
+                            <input type="text" id="pSurname" name="pSurname" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="pDate">Appointment Date <span class="optional-tag">(optional)</span></label>
+                        <input type="date" id="pDate" name="pDate">
+                    </div>
+                    <button type="submit" class="btn btn-primary modal-btn-full">Check Status</button>
+                    <button type="button" class="btn btn-secondary modal-btn-full" id="logoutBtn">Logout</button>
+                </form>
+
+                <!-- Result -->
+                <div class="patient-result" id="patientResult" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

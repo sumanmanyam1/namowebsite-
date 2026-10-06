@@ -1,0 +1,409 @@
+🏥 NAMO Hospitals — What We Did
+PART 1 — Created the Hospital Website
+Step 1: Created the website files
+
+We created the basic website using:
+
+index.html → website structure
+styles.css → website design
+script.js → website functionality
+
+The website contains things like:
+
+Home
+About
+Doctors
+Services
+Contact
+Login
+Patient Details
+Appointments
+
+
+
+
+PART 2 —
+ Created DynamoDB Database
+
+Step 2: Created a DynamoDB table In AWS DynamoDB, we created:
+
+Table name:
+paticienttable_namo_hospitals
+
+Step 3: Created the Primary Key
+
+We used:
+Partition key: patient.id
+and:
+Sort key:admission_date
+
+So one patient's database record looks roughly like:
+
+patient.id       → P001
+admission_date   → 2026-09-24
+name             → Ravi
+age              → 35
+doctor           → Dr. Niketa Sonavane
+
+PART 3 — Created Lambda
+
+
+Step 4: Created Lambda function
+
+We created: hospital-api
+
+Runtime: Python 3.14
+
+Architecture: x86_64
+
+The Lambda's job is to communicate between our website and DynamoDB.
+
+The basic flow is:
+
+Website
+   ↓
+Lambda
+   ↓
+DynamoDB
+
+
+
+PART 4 
+— Gave Lambda Permission
+
+
+Step 5: Created IAM permission
+
+Lambda needs permission to access DynamoDB.
+
+We gave the Lambda role permission for:
+
+PutItem
+Scan on:
+
+paticienttable_namo_hospitals
+
+So:
+
+Lambda
+   ↓
+Permission
+   ↓
+DynamoDB
+
+
+
+PART 5 — Wrote Lambda Code
+
+
+Step 6: Added GET functionality
+
+We made Lambda understand:
+
+GET
+
+GET means:
+
+"Give me the patient data."
+
+It uses:
+
+table.scan()
+
+So:
+
+Website
+   ↓ GET
+API Gateway
+   ↓
+Lambda
+   ↓
+DynamoDB
+   ↓
+Patient data
+
+
+Step 7: Added POST functionality
+
+We also made Lambda understand:
+
+POST
+
+POST means:
+
+"Save this new patient data."
+
+It uses:
+
+table.put_item(Item=body)
+
+So:
+
+Website
+   ↓ POST patient data
+API Gateway
+   ↓
+Lambda
+   ↓
+DynamoDB
+   ↓
+Saved
+
+
+PART 6 — Tested Lambda
+
+Step 8: Tested GET
+
+We tested Lambda with:
+
+{
+  "httpMethod": "GET"
+}
+
+It successfully retrieved patient records.
+
+Step 9: Tested POST
+
+We tested Lambda with patient information.
+
+For example:
+
+P999
+Test Patient
+9999999999
+Dr. Rahul Sharma
+10:30
+
+Lambda returned:
+
+Patient added successfully
+
+And we checked DynamoDB.
+
+The patient was there. ✅
+
+This proved that Lambda → DynamoDB was working.
+
+PART 7 — Created API Gateway
+
+Step 10: Created HTTP API
+
+We created:
+
+namo-hospitals-api
+
+API Gateway gives our website a public API address.
+
+Our API endpoint is:
+
+https://v3zad59huh.execute-api.ap-south-1.amazonaws.com
+PART 8 — Created API Routes
+Step 11: Created GET route
+
+We created:
+
+GET /patients
+
+which connects to:
+
+hospital-api
+
+
+
+Step 12: Created POST route
+
+We created:
+
+POST /patients
+
+which also connects to:
+
+hospital-api
+
+So our complete backend became:
+
+                    ┌──────────────┐
+                    │   Website    │
+                    └──────┬───────┘
+                           │
+                    POST /patients
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │ API Gateway  │
+                    └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │    Lambda    │
+                    └──────┬───────┘
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │   DynamoDB   │
+                    └──────────────┘
+
+
+
+PART 9 — Configured CORS
+
+Step 13: Enabled CORS
+
+Because our website is running separately from AWS, the browser needs permission to communicate with the API.
+
+We configured:
+
+Allow Origin:
+*
+
+Methods:
+
+GET
+POST
+
+Header:
+
+Content-Type
+
+This allows our localhost website to communicate with API Gateway.
+
+
+
+PART 10 — Connected Website to API
+
+Step 14: Modified script.js
+
+Previously, the appointment form was only showing:
+
+Appointment Confirmed
+
+It wasn't actually saving anything.
+
+We changed it so the website sends data to:
+
+/patients
+
+using:
+
+fetch(...)
+
+The website creates data like:
+
+const patientData = {
+    "patient.id": patientId,
+    "admission_date": date,
+    "name": first + ' ' + surname,
+    "phone": phone,
+    "doctor": doctor,
+    "appointment_time": time
+};
+
+Then:
+
+fetch(API_URL, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(patientData)
+});
+PART 11 — Fixed the JavaScript Error
+Step 15: Changed function to async
+
+Because we used:
+
+await fetch(...)
+
+we needed:
+
+async function
+
+instead of:
+
+function
+
+So:
+
+appointmentForm.addEventListener('submit', async function (event) {
+
+This is important because await only works inside an async function.
+
+
+
+PART 12 — Fixed Localhost
+
+Step 16: Started a local web server
+
+Initially you were opening:
+
+file:///home/suman-manyam/namohospitalswebsite/index.html
+
+That caused browser security problems.
+
+So we started a local server:
+
+cd /home/suman-manyamam/namohospitalswebsite
+python3 -m http.server 8000
+
+Small correction: your actual folder is:
+
+/home/suman-manyam/namohospitalswebsite
+
+So use:
+
+cd /home/suman-manyam/namohospitalswebsite
+python3 -m http.server 8000
+
+Then we open:
+
+http://localhost:8000
+🎯 Where We Are Now
+
+Your backend is currently:
+
+✅ DynamoDB
+      ↓
+✅ Lambda
+      ↓
+✅ API Gateway
+      ↓
+✅ POST /patients
+      ↓
+✅ GET /patients
+      ↓
+✅ CORS
+      ↓
+✅ Localhost website
+
+And we already proved:
+
+Lambda → DynamoDB       ✅
+API Gateway → Lambda    ✅
+GET /patients           ✅
+
+Your next thing to verify is:
+
+Localhost website
+       ↓
+   POST request
+       ↓
+ API Gateway
+       ↓
+    Lambda
+       ↓
+  DynamoDB
+
+That is the final connection we're testing now.
+
+🧠 Easy way to remember the whole project
+
+Think of it like a hospital reception:
+
+Website = Patient fills the form 📝
+API Gateway = Reception desk 📋
+Lambda = Hospital staff processing the form 👨‍💻
+DynamoDB = Hospital database 🗄️
+
+So:
+
+Patient fills form → Reception receives it → Staff processes it → Database stores it.
